@@ -4,6 +4,7 @@ import app.common.base.SparkApp
 import app.common.executor.Executor
 import app.common.template.DbToPq
 import org.apache.spark.sql.DataFrame
+import spark.common.util.EDITSPHERE
 
 object TestCompo extends SparkApp{
   def exec(implicit args: Array[String]) = {
@@ -11,6 +12,8 @@ object TestCompo extends SparkApp{
   }
 
   val compo = new DbToPq with Executor {
+
+    val sourceStation = ""
     def invoke(df:DataFrame)(implicit args: Array[String]) = {
       df.show(5,false)
       println(df.count)

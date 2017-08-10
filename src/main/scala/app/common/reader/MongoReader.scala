@@ -24,10 +24,18 @@ case class Workitem(
 
 object MongoReader {
 
+
+def apply(sourceStation:String) = {
+
   val readConfig = ReadConfig(Map("uri" -> "mongodb://114.115.147.192:30000/nsitedb.nSite.wf.workitems?readPreference=primaryPreferred"))
 
- def read() : DataFrame =  {
-   val rdd = MongoSpark.load(sc ,readConfig).withPipeline(Seq( Document.parse("{ $match: { state : { $in : ['Terminated','Completed','Exception']} } } ")))
-   rdd.toDF[Workitem]
+  new MongoReader(readConfig)
+}
+}
+
+class MongoReader(rc:ReadConfig) {
+  def read() : DataFrame =  {
+    val rdd = MongoSpark.load(sc ,rc).withPipeline(Seq( Document.parse("{ $match: { state : { $in : ['Terminated','Completed','Exception']} } } ")))
+    rdd.toDF[Workitem]
   }
 }
