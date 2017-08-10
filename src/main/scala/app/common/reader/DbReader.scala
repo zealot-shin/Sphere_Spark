@@ -4,9 +4,17 @@ import org.apache.spark.sql.DataFrame
 import spark.common.util._
 
 
-object DbReader {
+trait DbReader {
+
+  val sourceStation: SourceStation
+  val readDatabase: String
+  val readTableName: String
+
   def readDb(): DataFrame = {
-    val dbCtrl = new DbCtrl
+    val dbCtrl = new DbCtrl(sourceStation, readDatabase, readTableName)
     dbCtrl.read()
   }
+
+
+
 }

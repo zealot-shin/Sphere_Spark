@@ -25,9 +25,9 @@ case class Workitem(
 object MongoReader {
 
 
-def apply(sourceStation:String) = {
+def apply(ip:String,readDatabase:String,readTableName:String) = {
 
-  val readConfig = ReadConfig(Map("uri" -> "mongodb://114.115.147.192:30000/nsitedb.nSite.wf.workitems?readPreference=primaryPreferred"))
+  val readConfig = ReadConfig(Map("uri" -> s"mongodb://${ip}/${readDatabase}.${readTableName}?readPreference=primaryPreferred"))
 
   new MongoReader(readConfig)
 }
