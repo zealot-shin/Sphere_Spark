@@ -1,15 +1,17 @@
 package app.common.reader
 
 import org.apache.spark.sql.DataFrame
-import spark.common.util._
+import org.apache.spark.sql.catalyst.expressions.StructsToJson
+import org.apache.spark.sql.types.StructType
 import org.bson.Document
+import spark.common.util._
 
 
 trait DbReader {
 
   val sourceStation: SourceStation
   val readTableName: String
-  val readSchema: ReadSchema = null
+  val schema: StructType = null
   val matchQuery: Document = null
   val projection: Document = null
   val columns: Array[String] = null
@@ -18,7 +20,7 @@ trait DbReader {
 
 
   def readDb(): DataFrame = {
-    val dbCtrl = new DbCtrl(sourceStation, readTableName, readSchema, matchQuery, projection, columns,readDbWhere, predicates)
+    val dbCtrl = new DbCtrl(sourceStation, readTableName, schema, matchQuery, projection, columns, readDbWhere, predicates)
     dbCtrl.read()
   }
 

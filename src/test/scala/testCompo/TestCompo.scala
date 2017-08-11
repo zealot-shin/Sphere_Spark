@@ -4,24 +4,11 @@ import app.common.base.SparkApp
 import app.common.executor.Executor
 import app.common.template.DbToPq
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.SaveMode._
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.{StructType, StructField, StringType}
 import org.bson.Document
 import spark.common.util._
-import org.apache.spark.sql.functions._
-import org.apache.spark.sql.SaveMode._
-
-case class Workitem(
-                     _id: String,
-                     _type: String,
-                     activityDefineName: String,
-                     activityTemplateName: String,
-                     worker: String,
-                     state: String,
-                     createdTime: String,
-                     createdBy: String,
-                     startTime: String,
-                     stopTime: String,
-                     name: String
-                   )
 
 object TestCompo extends SparkApp {
   def exec(implicit args: Array[String]) = {
@@ -36,6 +23,21 @@ object TestCompo extends SparkApp {
     val writeMode = Overwrite
     val sourceStation = new HBTV
     val readTableName = "nSite.wf.workitems"
+    override val schema = StructType(
+      List(
+        StructField("_id", StringType, true),
+        StructField("type", StringType, true),
+        StructField("activityDefineName", StringType, true),
+        StructField("activityTemplateName", StringType, true),
+        StructField("worker", StringType, true),
+        StructField("state", StringType, true),
+        StructField("createdTime", StringType, true),
+        StructField("createdBy", StringType, true),
+        StructField("startTime", StringType, true),
+        StructField("stopTime", StringType, true),
+        StructField("name", StringType, true)
+      )
+    )
     override val matchQuery = Document.parse("{ $match: { state : { $in : ['Terminated','Completed','Exception']} } } ")
 
     def invoke(df: DataFrame)(implicit args: Array[String]) = {

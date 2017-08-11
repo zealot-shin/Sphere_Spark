@@ -3,8 +3,9 @@ package spark.common.util
 import java.io.FileNotFoundException
 import java.util.Properties
 
-import app.common.reader.{MongoReader, MysqlReader, ReadSchema}
+import app.common.reader.{MongoReader, MysqlReader}
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.types.StructType
 import org.bson.Document
 
 trait SourceStation
@@ -21,7 +22,7 @@ case class JSTV() extends SourceStation
 
 case class SMG() extends SourceStation
 
-class DbCtrl(val sourceStation: SourceStation, val readTableName: String, val readSchema: ReadSchema, val matchQuery: Document,
+class DbCtrl(val sourceStation: SourceStation, val readTableName: String, val schema: StructType, val matchQuery: Document,
              val projection: Document, val columns: Array[String], val readDbWhere: Array[String], val predicates: Array[String]) {
 
   val (ipAndDb, dbType) = sourceStation match {
@@ -37,7 +38,7 @@ class DbCtrl(val sourceStation: SourceStation, val readTableName: String, val re
 
   def read(): DataFrame = {
     dbType match {
-      case "mongo" => MongoReader(ipAndDb, readTableName, readSchema, matchQuery, projection).read()
+      case "mongo" => MongoReader(ipAndDb, readTableName, schema, matchQuery, projection).read()
       case "mysql" => {
         getProp()
         MysqlReader(prop, ipAndDb, readTableName, columns, readDbWhere, predicates).read()
