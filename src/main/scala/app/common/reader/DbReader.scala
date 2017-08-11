@@ -9,15 +9,17 @@ trait DbReader {
 
   val sourceStation: SourceStation
   val readTableName: String
-  val readSchema: ReadSchema
+  val readSchema: ReadSchema = null
+  val matchQuery: Document = null
+  val projection: Document = null
+  val columns: Array[String] = null
+  val readDbWhere: Array[String] = Array("1 = 1")
+  val predicates: Array[String] = null
 
-   val matchQuery: Document
-   val projection: Document
 
   def readDb(): DataFrame = {
-    val dbCtrl = new DbCtrl(sourceStation, readTableName, readSchema, matchQuery, projection)
+    val dbCtrl = new DbCtrl(sourceStation, readTableName, readSchema, matchQuery, projection, columns,readDbWhere, predicates)
     dbCtrl.read()
   }
-
 
 }
