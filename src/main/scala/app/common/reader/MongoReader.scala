@@ -5,37 +5,37 @@ import org.bson.Document
 import com.mongodb.spark.config._
 import org.apache.spark.sql.DataFrame
 import spark.common.SparkContexts._
+import testCompo.Workitem
 
-case class Workitem(
-                     _id: String,
-                     _type: String,
-                     activityDefineName: String,
-                     activityTemplateName: String,
-                     worker: String,
-                     state: String,
-                     createdTime: String,
-                     createdBy: String,
-                     startTime: String,
-                     stopTime: String,
-                     name: String,
-                     sourceSystem: String = "editsphere_v1",
-                     sourceStation: String = "CDV"
-                   )
+trait ReadSchema
 
 object MongoReader {
 
 
-def apply(ip:String,readDatabase:String,readTableName:String) = {
+  def apply(ipAndDb: String, readTableName: String, rs: ReadSchema, matchQuery: Document, projection: Document) = {
 
-  val readConfig = ReadConfig(Map("uri" -> s"mongodb://${ip}/${readDatabase}.${readTableName}?readPreference=primaryPreferred"))
-
-  new MongoReader(readConfig)
+    val readConfig = ReadConfig(Map("uri" -> s"${ipAndDb}.${readTableName}?readPreference=primaryPreferred"))
+    new MongoReader(readConfig, rs, matchQuery, projection)
+  }
 }
-}
 
-class MongoReader(rc:ReadConfig) {
-  def read() : DataFrame =  {
-    val rdd = MongoSpark.load(sc ,rc).withPipeline(Seq( Document.parse("{ $match: { state : { $in : ['Terminated','Completed','Exception']} } } ")))
-    rdd.toDF[Workitem]
+class MongoReader(rc: ReadConfig, rs: ReadSchema, matchQuery: Document, projection: Document) {
+
+  def read(): DataFrame = {
+
+    (matchQuery, projection) match {
+      case (mq, null) if !mq.isEmpty => {
+        val rdd = MongoSpark.load(sc, rc).withPipeline(Seq(mq))
+        rdd.toDF[Workitem]()
+      }
+      case (null, p) if !p.isEmpty => {
+        val rdd = MongoSpark.load(sc, rc).withPipeline(Seq(p))
+        rdd.toDF[Workitem]()
+      }
+      case _ => {
+        val rdd = MongoSpark.load(sc, rc)
+        rdd.toDF[Workitem]()
+      }
+    }
   }
 }

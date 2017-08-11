@@ -10,7 +10,9 @@ trait SparkApp {
 
   def runner(args: Array[String]) {
     println(s"${new DateTime toString (DATE_FORMAT)} INFO START")
-    if (args(3) == "true") { args.foreach(println) }
+    if (args(3) == "true") {
+      args.foreach(println)
+    }
     try exec(args: Array[String]) catch {
       case e: Throwable => println(s"${new DateTime toString (DATE_FORMAT)} ERROR ${e.toString()}"); throw e
     }
