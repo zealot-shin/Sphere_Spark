@@ -1,12 +1,11 @@
 # Sphere_Spark
 用spark 进行数据的etl
 数据源目前有mongodb 和mysql db
-初版代码实现了 mongodb 的连接和一个简单的硬变成的数据抽取
+目前已经实现了MySQL和mongo 数据库的连接设置，写入pq文件的简单设置。
 
 以下有待实现：
-1，mysql 的连接
-2，将db源的各个信息，uri，项目，schema等参数化
+1，连接和查询优化 部分。
+2，mongodb的schema等参数化
 3，spark conf 的设置
 4，hdfs 的pq存储设置
-
-目前就想到这些
+5，集群环境的发布调整
