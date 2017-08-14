@@ -1,21 +1,24 @@
 package app.common.flow
 
-import spark.common.Logging
+import app.common.base.InArgs
 import org.apache.spark.sql.DataFrame
+import spark.common.Logging
 
 trait OneInToOneOut[IN, OUT] extends Logging {
-  def preExec(in: IN)(implicit args: Array[String]): DataFrame
-  def exec(df: DataFrame)(implicit args: Array[String]): DataFrame
-  def postExec(df: DataFrame)(implicit args: Array[String]): OUT
+  def preExec(in: IN)(implicit args: InArgs): DataFrame
 
-  final def run(in: IN)(implicit args: Array[String]): OUT = {
+  def exec(df: DataFrame)(implicit args: InArgs): DataFrame
+
+  def postExec(df: DataFrame)(implicit args: InArgs): OUT
+
+  final def run(in: IN)(implicit args: InArgs): OUT = {
     val input = try {
       preExec(in)
     } catch {
       case t: Throwable => platformError(t); throw t
     }
-    if (args(3) == "true") {
-      println(s"${args(0)}{input}")
+    if (args.deBug == "true") {
+      println(s"${args.appId}{input}")
       input.show(false)
     }
 
@@ -25,8 +28,8 @@ trait OneInToOneOut[IN, OUT] extends Logging {
       case t: Throwable => appError(t); throw t
     }
 
-    if (args(3) == "true") {
-      println(s"${args(0)}{output}")
+    if (args.deBug == "true") {
+      println(s"${args.appId}{output}")
       output.show(false)
     }
 
@@ -36,6 +39,7 @@ trait OneInToOneOut[IN, OUT] extends Logging {
       case t: Throwable => platformError(t); throw t
     }
   }
-  final def debug(in: IN)(implicit args: Array[String]): OUT =
-    run(in)(Array(args(0), args(1), args(2), "true"))
+
+  final def debug(in: IN)(implicit args: InArgs): OUT =
+    run(in)(args)
 }

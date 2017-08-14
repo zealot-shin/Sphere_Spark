@@ -11,9 +11,9 @@ object SparkContexts {
   //  val sqlContext = new SQLContext(sc)
   val spark = SparkSession
     .builder()
-    .master("local[*]")
-    .appName("Sphere Spark ETL")
-//    .config("spark.some.config.option", "some-value")
+    //    .master("local[*]")
+    //    .appName("Sphere Spark ETL")
+    //    .config("spark.some.config.option", "some-value")
     .getOrCreate()
 
   val sc = spark.sparkContext

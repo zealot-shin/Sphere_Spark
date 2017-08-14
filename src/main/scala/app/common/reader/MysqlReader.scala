@@ -1,9 +1,9 @@
 package app.common.reader
 
-import spark.common.SparkContexts._
 import java.util.Properties
 
 import org.apache.spark.sql.DataFrame
+import spark.common.SparkContexts._
 
 object MysqlReader {
 

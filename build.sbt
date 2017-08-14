@@ -13,3 +13,4 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.6"
+libraryDependencies += "joda-time" % "joda-time" % "2.9.3"

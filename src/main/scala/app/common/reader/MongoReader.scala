@@ -3,9 +3,9 @@ package app.common.reader
 import com.mongodb.spark._
 import com.mongodb.spark.config._
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.types.StructType
 import org.bson.Document
 import spark.common.SparkContexts._
-import org.apache.spark.sql.types.StructType
 
 object MongoReader {
 

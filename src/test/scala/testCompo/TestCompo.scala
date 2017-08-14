@@ -1,25 +1,25 @@
 package testCompo
 
-import app.common.base.SparkApp
+import app.common.base.{InArgs, SparkApp}
 import app.common.executor.Executor
 import app.common.template.DbToPq
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.SaveMode._
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{StructType, StructField, StringType}
+import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.bson.Document
 import spark.common.util._
 
 object TestCompo extends SparkApp {
-  def exec(implicit args: Array[String]) = {
+  def exec(implicit args: InArgs) = {
     compo1.run()
     compo2.run()
   }
 
   val compo1 = new DbToPq with Executor {
 
-    val compoName = ""
-    val writerPqPath: String = "E:\\workspace\\SphereSpark\\data\\test/wf_item_hbtv"
+    val compoName = "id001"
+    val writerPqName: String = "wf_item_hbtv"
     val writeMode = Overwrite
     val sourceStation = new HBTV
     val readTableName = "nSite.wf.workitems"
@@ -40,7 +40,7 @@ object TestCompo extends SparkApp {
     )
     override val matchQuery = Document.parse("{ $match: { state : { $in : ['Terminated','Completed','Exception']} } } ")
 
-    def invoke(df: DataFrame)(implicit args: Array[String]) = {
+    def invoke(df: DataFrame)(implicit args: InArgs) = {
       val pdf = df
         .withColumn("sourceSystem", lit("editsphere_v1"))
         .withColumn("sourceStation", lit("HBTV"))
@@ -54,7 +54,7 @@ object TestCompo extends SparkApp {
   val compo2 = new DbToPq with Executor {
 
     val compoName = ""
-    val writerPqPath: String = "E:\\workspace\\SphereSpark\\data\\test/wf_item_newsphere"
+    val writerPqName: String = "wf_item_newsphere"
     val writeMode = Append
     val sourceStation = new NewSphere
     override val columns = Array("workitemid", "workitemtype", "activitydefname", "activitytmplname", "worker", "currentstate", "createtime", "createdby", "starttime", "stoptime", "workname", "'newsphere_v1'", "'CDV'")
@@ -64,7 +64,7 @@ object TestCompo extends SparkApp {
     //    override val predicates = Array("currentstate =3", "currentstate =4", "currentstate =5")
 
 
-    def invoke(df: DataFrame)(implicit args: Array[String]) = {
+    def invoke(df: DataFrame)(implicit args: InArgs) = {
       val pdf = df
         .withColumn("sourceSystem", col("newsphere_v1"))
         .withColumn("sourceStation", col("CDV"))
