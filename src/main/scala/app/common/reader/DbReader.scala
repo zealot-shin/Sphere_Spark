@@ -1,5 +1,6 @@
 package app.common.reader
 
+import app.common.base.InArgs
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.StructType
 import org.bson.Document
@@ -18,7 +19,7 @@ trait DbReader {
   val predicates: Array[String] = null
 
 
-  def readDb(): DataFrame = {
+  def readDb()(implicit args: InArgs): DataFrame = {
     val dbCtrl = new DbCtrl(sourceStation, readTableName, schema, matchQuery, projection, columns, readDbWhere, predicates)
     dbCtrl.read()
   }

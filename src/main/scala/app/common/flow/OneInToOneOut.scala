@@ -17,7 +17,7 @@ trait OneInToOneOut[IN, OUT] extends Logging {
     } catch {
       case t: Throwable => platformError(t); throw t
     }
-    if (args.deBug == "true") {
+    if (args.debug == "true") {
       println(s"${args.appId}{input}")
       input.show(false)
     }
@@ -28,7 +28,7 @@ trait OneInToOneOut[IN, OUT] extends Logging {
       case t: Throwable => appError(t); throw t
     }
 
-    if (args.deBug == "true") {
+    if (args.debug == "true") {
       println(s"${args.appId}{output}")
       output.show(false)
     }
